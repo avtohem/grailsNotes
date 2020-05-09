@@ -1,0 +1,41 @@
+//get image from real path, outside the project
+
+// controller action
+def displayGraph = {
+    def img // byte array
+    //...
+    response.setHeader('Content-length', img.length)
+    response.contentType = 'image/png' // or the appropriate image content type
+    response.outputStream << img
+    response.outputStream.flush()
+}
+
+You could then access your image in the src of an <img> tag like this:
+
+<img src="${createLink(controller: 'myController', action: 'displayGraph')}"/>
+
+
+
+//Alternative solution
+
+//since file has been uploaded to your file system. 
+//We will proceed with rendering it on gsp page. 
+//Create another action which reads image as stream from the saved location and renders it to gsp page.
+
+def renderImage = {
+String profileImagePath = "/home/arvind/Images/"
+//String profileImagePath = grailsApplication.grails.profile.images.path
+String image image = 'abc.jpg' // or whatever name you saved in your db
+File imageFile =new File(profileImagePath+image);
+BufferedImage originalImage=ImageIO.read(imageFile);
+ByteArrayOutputStream baos=new ByteArrayOutputStream();
+ImageIO.write(originalImage, "jpg", baos );
+byte[] imageInByte=baos.toByteArray();
+response.setHeader('Content-length', imageInByte.length.toString())
+response.contentType = 'image/jpg' // or the appropriate image content type
+response.outputStream << imageInByte response.outputStream.flush()
+}
+
+//Now , we have our action ready. We now just have to render this image in our view.Simply add this code in the related page. Here renderImage.gsp
+
+<img src="${createLink(controller: 'my_controller', action:'renderImage')}"
