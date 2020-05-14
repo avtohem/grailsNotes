@@ -39,3 +39,35 @@ response.outputStream << imageInByte response.outputStream.flush()
 //Now , we have our action ready. We now just have to render this image in our view.Simply add this code in the related page. Here renderImage.gsp
 
 <img src="${createLink(controller: 'my_controller', action:'renderImage')}"
+
+
+
+
+You can't point to external file with asset tag. But you can retrieve the file from the filesystem and "attach" it to response as a byte array, example of a controller action:
+
+def getImage() {
+    byte[] imageInBytes = imageService.getImage()
+    response.with{
+        setHeader('Content-length', imageInBytes.length.toString())
+        contentType = 'image/jpg' // or the appropriate image content type
+        outputStream << imageInBytes
+        outputStream.flush()
+    }
+}
+
+Service logic may look like that:
+
+byte[] getImage() {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream()
+    ImageIO.write(ImageIO.read(new File('/path/to/file')), "jpg", baos)
+    baos.toByteArray()
+}
+
+And finally the img tag on your gsp:
+
+<img ... src="${createLink(controller: 'imageController', action: 'getImage')}" />
+
+May be you'll want to play with ids and URL Mappings to retrieve the particular images with the service logic.
+
+
+
