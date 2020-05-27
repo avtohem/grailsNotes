@@ -1,0 +1,15 @@
+saveFile(String fileName, inputFile){
+    try{
+        def streamFile =  new File(fileName).newOutputStream()
+        byte[] bytes = new byte[1024]
+        int read
+        def stream = inputFile.getInputStream()
+        while ((read = stream.read(bytes)) != -1) {
+            streamFile.write(bytes, 0, read)
+        }
+        streamFile.close()
+        return true
+    } catch (e){
+       throw new RuntimeException("Error save file - $fileName")
+       return false
+    }
