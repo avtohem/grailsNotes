@@ -1,0 +1,10 @@
+//how to use servise class in gsp module
+
+<g:if test="${vo.params['ManagmentBy']}">
+  <choice:choiceLabel value="${vo.params['ManagmentBy']}" choiceName="BuildingMgmtCompList"/>
+  <g:set var="choiceService" bean="choiceListService"/>
+  <g:set var="phoneNum" value="${choiceService.matchItem("BuildingMgmtCompPhone", "${vo.params['ManagmentBy']}")?label}"/>
+  <g:if test="${phoneNum != 'null'}">
+      - (${"тел.: "} ${phoneNum})
+  </g:if>
+</g:if>
